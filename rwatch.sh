@@ -9,16 +9,19 @@ declare DESTINATION
 function help_show_usage() {
 cat << EOF
 SUMMARY
-    Syncs PWD to destination.
+    Rsyncs the present working directory (pwd) to denoted destination.
     Destination may be a local or remote directory.
-    If logging into remote, then using persistent ssh connection, such as ControlMaster, is recommended.
+    If logging into remote, then using persistent ssh connection,
+    such as ControlMaster, is recommended.
 
 USAGE
-    $ rwatch <ssh_alias>:<path_remote_destination_folder>
+    $ rwatch <ssh_alias>:<path/remote/folder>
+    $ rwatch <path/to/local_folder>
 
 EXAMPLE
     $ rwatch vul-4:/srv/http/station.paperdrift
     $ rwatch vul-4:/srv/http/ww2.inkonpages
+    $ rwatch ~/path/some_folder
 
 FLAGS
     -h    This help.
@@ -36,7 +39,7 @@ function do_rsync() {
     local GITIGNORE=''
     local GITIGNORE_GLOBAL=''
 
-    # Check if .gitignore (in pwd) and gitignore_globa (in home) exists;
+    # Check if .gitignore (in pwd) and gitignore_global (in home) exists;
     if [[ -f ./.gitignore ]]; then
         GITIGNORE="./.gitignore"
     fi
@@ -60,6 +63,16 @@ function do_rsync() {
     # sleep .3
     # tmux send-keys -t .0 "url #$TIMESTAMP" enter
       # If you want to reload uwsgi with alias url; and provide timestamp; in pane 0;
+    # tmux send-keys -t ${WINDOW}.${PANE}
+    tmux send-keys -t 1.0 "url" enter
+
+    # Announce remote pane is ready
+    sleep 1
+    # tmux send-keys -t ${WINDOW}.${PANE} "#- 🧭 rwatch Ready" enter
+    tmux send-keys -t 1.0 "#- 🧭 rwatch Ready" enter
+
+    # Should do like gitwatch and enable flags to set tmux window/pane settings;
+
 
     # Not sure why, but doing ./* doesn't seem to delete files in destination; have to do ./; I swear the prior had worked beforee;
     # Exclude --delete-excluded to effectively do an "ignore"; we want to ignore the --excclude files; not sync it at all;
