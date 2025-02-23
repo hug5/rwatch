@@ -9,7 +9,7 @@ declare DESTINATION
 function help_show_usage() {
 cat << EOF
 SUMMARY
-    Rsyncs the present working directory (pwd) to denoted destination.
+    Rsyncs the working directory (pwd) to specified destination.
     Destination may be a local or remote directory.
     If logging into remote, then using persistent ssh connection,
     such as ControlMaster, is recommended.
